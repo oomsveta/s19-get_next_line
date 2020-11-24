@@ -6,7 +6,7 @@ This is my second project at 19 Coding School. `get_next_line` is a function whi
 get used with file reading in C.
 
 The project guidelines are available [here](/subjects/en.subject.pdf); note that this repository is NOT fully-compliant with the requirements, mainly for organizational purposes.
-Students, if you steal my code, you'll be face the consequences 😈 
+Students, be aware, if you steal my code, you'll face the consequences 😈 
 
 ## Why is your coding-style so weird?
 
