@@ -6,6 +6,7 @@
 a.out
 libft.a
 test.c
+test.txt
 
 /.idea/
 /.vscode/
