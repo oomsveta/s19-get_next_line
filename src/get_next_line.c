@@ -11,3 +11,21 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdio.h> // TODO: Remove
+
+static void	readline(int fd, t_list **file_data)
+{
+	if (file_data)
+		while ((*file_data)->)
+}
+
+int	get_next_line(int fd, char **line)
+{
+	static t_list *files_data[FOPEN_MAX];
+
+	if (fd < 0 || !line || BUFFER_SIZE < 1 || fd >= FOPEN_MAX)
+		return (-1);
+	readline(fd, &files_data[fd]);
+
+	return (1);
+}
