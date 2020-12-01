@@ -11,3 +11,11 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+char	*ft_strchr(const char *s, int c)
+{
+	while (*s)
+		if (*s++ == c)
+			return ((char *)--s);
+	return (c ? NULL : (char *)s);
+}

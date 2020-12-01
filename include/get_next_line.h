@@ -23,10 +23,10 @@
 typedef struct	s_list
 {
 	char			*data;
-	char 			*cursor;
 	struct s_list	*next;
 }				t_list;
 
 int	get_next_line(int fd, char **line);
+void	ft_lstadd_back(t_list **lst, t_list *new);
 
 #endif
