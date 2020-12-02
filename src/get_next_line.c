@@ -6,14 +6,14 @@
 /*   By: lwicket <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/01 14:10:02 by lwicket           #+#    #+#             */
-/*   Updated: 2020/12/02 09:54:37 by lwicket          ###   ########.fr       */
+/*   Updated: 2020/12/02 10:56:49 by lwicket          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdio.h> // TODO: Remove
 
-static void append_lst(t_file *file_data, char *buffer)
+static void append_lst(t_file **file_data, char *buffer)
 {
 	t_list	*node;
 
@@ -21,21 +21,21 @@ static void append_lst(t_file *file_data, char *buffer)
 		return ; // TODO: handle error
 	node->content = buffer;
 	node->next = NULL;
-	if (!file_data)
+	if (!*file_data)
 	{
-		if (!(file_data = malloc(sizeof(t_file))))
+		if (!(*file_data = malloc(sizeof(t_file))))
 			return ; // TODO: handle error
-		file_data->lst_size = 1;
-		file_data->head = node;
-		file_data->last = node;
+		(*file_data)->lst_size = 1;
+		(*file_data)->head = node;
+		(*file_data)->last = node;
 	}
 	else
 	{
-		file_data->lst_size++;
-		file_data->last->next = node;
-		file_data->last = node;
+		(*file_data)->lst_size++;
+		(*file_data)->last->next = node;
+		(*file_data)->last = node;
 	}
-	printf("%s", node->content);
+	printf("%s", (*file_data)->last->content);
 }
 
 //static int	format_output(t_list *file_data, char **line)
@@ -49,10 +49,9 @@ static int	includes_eol(t_file *file_data)
 
 	if (file_data)
 	{
-		puts("lol");
 		str = file_data->last->content;
-		while (*str++)
-			if (*str == '\n')
+		while (*str)
+			if (*str++ == '\n')
 				return (1);
 	}
 	return (0);
@@ -70,12 +69,12 @@ int	get_next_line(int fd, char **line)
 	{
 		if (!(buffer = malloc(BUFFER_SIZE + 1)))
 			return (-1); // TODO: free all
+		// TODO: handle error and EOF
 		if ((buff_len = read(fd, buffer, BUFFER_SIZE)) > 0)
 		{
 			buffer[buff_len] = '\0';
-			append_lst(files_data[fd], buffer);
+			append_lst(&(files_data[fd]), buffer);
 		}
-		printf("%d\n", buff_len);
 	}
 	return (1);
 }
