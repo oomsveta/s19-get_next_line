@@ -6,7 +6,7 @@
 /*   By: lwicket <lwicket@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 1970/01/01 00:00:00 by lwicket           #+#    #+#             */
-/*   Updated: 1970/01/01 00:00:00 by lwicket          ###   ########.fr       */
+/*   Updated: 2020/12/02 09:44:00 by lwicket          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,16 @@
 
 typedef struct	s_list
 {
-	char			*data;
+	char			*content;
 	struct s_list	*next;
 }				t_list;
+
+typedef struct	s_file
+{
+	t_list	*head;
+	t_list	*last;
+	size_t	lst_size;
+}				t_file;
 
 int	get_next_line(int fd, char **line);
 void	ft_lstadd_back(t_list **lst, t_list *new);
