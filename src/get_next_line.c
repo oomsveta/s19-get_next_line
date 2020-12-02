@@ -6,7 +6,7 @@
 /*   By: lwicket <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/01 14:10:02 by lwicket           #+#    #+#             */
-/*   Updated: 2020/12/02 10:56:49 by lwicket          ###   ########.fr       */
+/*   Updated: 2020/12/02 14:24:29 by lwicket          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,15 @@ static void append_lst(t_file **file_data, char *buffer)
 	printf("%s", (*file_data)->last->content);
 }
 
-//static int	format_output(t_list *file_data, char **line)
-//{
-//	return (1);
-//}
+static int	format_output(t_file *data, char **line)
+{
+	size_t	size;
+
+	size = BUFFER_SIZE * (data->lst_size - 1) + ft_strlen(data->last->content);
+	(void)line;
+	printf("%zu", size);
+	return (1);
+}
 
 static int	includes_eol(t_file *file_data)
 {
@@ -76,5 +81,5 @@ int	get_next_line(int fd, char **line)
 			append_lst(&(files_data[fd]), buffer);
 		}
 	}
-	return (1);
+	return (format_output(files_data[fd], line));
 }

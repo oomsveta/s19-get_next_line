@@ -6,7 +6,7 @@
 /*   By: lwicket <lwicket@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 1970/01/01 00:00:00 by lwicket           #+#    #+#             */
-/*   Updated: 2020/12/02 09:44:00 by lwicket          ###   ########.fr       */
+/*   Updated: 2020/12/02 14:27:52 by lwicket          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ typedef struct	s_file
 }				t_file;
 
 int	get_next_line(int fd, char **line);
-void	ft_lstadd_back(t_list **lst, t_list *new);
+void	ft_lstdelone(t_list *lst, void (*del)(void *));
+size_t	ft_strlen(const char *s);
 
 #endif
