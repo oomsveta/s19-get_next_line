@@ -24,7 +24,10 @@ static void append_lst(t_file **ptr, char *buffer)
 	if (!file_data)
 	{
 		if (!(*ptr = malloc(sizeof(t_file))))
+		{
+			free(node);
 			return ; // TODO: handle error
+		}
 		file_data = *ptr;
 		file_data->length = 0;
 		file_data->head = node;
