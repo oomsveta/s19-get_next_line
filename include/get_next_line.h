@@ -30,7 +30,7 @@ typedef struct	s_file
 {
 	t_list	*head;
 	t_list	*last;
-	size_t	lst_size;
+	size_t	length;
 }				t_file;
 
 int	get_next_line(int fd, char **line);

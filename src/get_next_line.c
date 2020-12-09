@@ -25,13 +25,12 @@ static void append_lst(t_file **file_data, char *buffer)
 	{
 		if (!(*file_data = malloc(sizeof(t_file))))
 			return ; // TODO: handle error
-		(*file_data)->lst_size = 1;
+		(*file_data)->length = 0;
 		(*file_data)->head = node;
 		(*file_data)->last = node;
 	}
 	else
 	{
-		(*file_data)->lst_size++;
 		(*file_data)->last->next = node;
 		(*file_data)->last = node;
 	}
@@ -58,14 +57,14 @@ static int	format_output(t_file *data, char **line)
 {
 	size_t	size;
 
-	size = BUFFER_SIZE * (data->lst_size - 1) + ft_strlen(data->last->content);
+	size = data->length + 1;
 	if (!(*line = malloc(size)))
 		return (-1);
 	lst_to_str(data, *line);
 	return (1);
 }
 
-static int	includes_eol(t_file *file_data)
+static int	fetch_eol(t_file *file_data)
 {
 	char	*str;
 
@@ -79,6 +78,7 @@ static int	includes_eol(t_file *file_data)
 				*str = '\0';
 				return (1);
 			}
+			file_data->length++;
 			str++;
 		}
 
@@ -94,7 +94,7 @@ int	get_next_line(int fd, char **line)
 
 	if (fd < 0 || !line || BUFFER_SIZE < 1 || fd >= FOPEN_MAX)
 		return (-1);
-	while (!includes_eol(files_data[fd]))
+	while (!fetch_eol(files_data[fd]))
 	{
 		if (!(buffer = malloc(BUFFER_SIZE + 1)))
 			return (-1); // TODO: free all
