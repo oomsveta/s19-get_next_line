@@ -35,7 +35,23 @@ static void append_lst(t_file **file_data, char *buffer)
 		(*file_data)->last->next = node;
 		(*file_data)->last = node;
 	}
-	printf("%s", (*file_data)->last->content);
+	// printf("%s", (*file_data)->last->content);
+}
+
+static void lst_to_str(t_file *data, char *str)
+{
+	char *content;
+	t_list	*node;
+
+	while (data->head != data->last)
+	{
+		node = data->head;
+		content = node->content;
+		while (*content)
+			*str++ = *content++;
+		data->head = data->head->next;
+		ft_lstdelone(node, &free);
+	}
 }
 
 static int	format_output(t_file *data, char **line)
@@ -43,8 +59,9 @@ static int	format_output(t_file *data, char **line)
 	size_t	size;
 
 	size = BUFFER_SIZE * (data->lst_size - 1) + ft_strlen(data->last->content);
-	(void)line;
-	printf("%zu", size);
+	if (!(*line = malloc(size)))
+		return (-1);
+	lst_to_str(data, *line);
 	return (1);
 }
 
@@ -56,8 +73,15 @@ static int	includes_eol(t_file *file_data)
 	{
 		str = file_data->last->content;
 		while (*str)
-			if (*str++ == '\n')
+		{
+			if (*str == '\n')
+			{
+				*str = '\0';
 				return (1);
+			}
+			str++;
+		}
+
 	}
 	return (0);
 }
