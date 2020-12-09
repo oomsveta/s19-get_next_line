@@ -36,5 +36,7 @@ typedef struct	s_file
 int	get_next_line(int fd, char **line);
 void	ft_lstdelone(t_list *lst, void (*del)(void *));
 size_t	ft_strlen(const char *s);
+char	*ft_strdup(const char *s);
+t_list	*ft_lstnew(void *content);
 
 #endif

@@ -13,28 +13,25 @@
 #include "get_next_line.h"
 #include <stdio.h> // TODO: Remove
 
-static void append_lst(t_file **file_data, char *buffer)
+static void append_lst(t_file **ptr, char *buffer)
 {
 	t_list	*node;
+	t_file	*file_data;
 
-	if (!(node = malloc(sizeof(t_list))))
+	if (!(node = ft_lstnew(buffer)))
 		return ; // TODO: handle error
-	node->content = buffer;
-	node->next = NULL;
-	if (!*file_data)
+	file_data = *ptr;
+	if (!file_data)
 	{
-		if (!(*file_data = malloc(sizeof(t_file))))
+		if (!(*ptr = malloc(sizeof(t_file))))
 			return ; // TODO: handle error
-		(*file_data)->length = 0;
-		(*file_data)->head = node;
-		(*file_data)->last = node;
+		file_data = *ptr;
+		file_data->length = 0;
+		file_data->head = node;
 	}
 	else
-	{
-		(*file_data)->last->next = node;
-		(*file_data)->last = node;
-	}
-	// printf("%s", (*file_data)->last->content);
+		file_data->last->next = node;
+	file_data->last = node;
 }
 
 static void lst_to_str(t_file *data, char *str)
@@ -51,6 +48,16 @@ static void lst_to_str(t_file *data, char *str)
 		data->head = data->head->next;
 		ft_lstdelone(node, &free);
 	}
+	content = data->head->content;
+	node = data->head;
+	while (*content)
+		*str++ = *content++;
+	if (!(data->head = malloc(sizeof(t_list))))
+		return ; // TODO: handle error
+	data->head->content = ft_strdup(content);// TODO: handle error
+	data->head->next = NULL;
+	data->length = 0;
+	ft_lstdelone(node, &free);
 }
 
 static int	format_output(t_file *data, char **line)
