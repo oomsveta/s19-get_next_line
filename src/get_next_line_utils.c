@@ -12,26 +12,6 @@
 
 #include "get_next_line.h"
 
-void	ft_lstdelone(t_list *lst, void (*del)(void *))
-{
-	if (!lst)
-		return ;
-	if (del)
-		del(lst->content);
-	free(lst);
-}
-
-size_t	ft_strlen(const char *s)
-{
-	size_t ret;
-
-	ret = 0;
-	if (s)
-		while (*s++)
-			ret++;
-	return (ret);
-}
-
 void	*ft_memcpy(void *dest, const void *src, size_t n)
 {
 	unsigned char	*s;
@@ -46,25 +26,62 @@ void	*ft_memcpy(void *dest, const void *src, size_t n)
 	return (dest);
 }
 
-t_list	*ft_lstnew(void *content)
+void	*ft_memmove(void *dest, const void *src, size_t n)
 {
-	t_list	*node;
+	unsigned char		*d;
+	const unsigned char	*s;
 
-	if (!(node = malloc(sizeof(t_list))))
-		return (NULL);
-	node->content = content;
-	node->next = NULL;
-	return (node);
+	if (dest == src)
+		return (dest);
+	d = dest;
+	s = src;
+	if (s < d)
+		while (n--)
+			d[n] = s[n];
+	else
+		while (n--)
+			*d++ = *s++;
+	return (dest);
 }
 
-char	*ft_strdup(const char *s)
+t_gnl_vec	*gnl_vec_new()
 {
-	size_t	size;
-	char	*cpy;
+	t_gnl_vec *vec;
 
-	size = ft_strlen(s) + 1;
-	if (!(cpy = malloc(size)))
+	if (!(vec = malloc(sizeof(t_gnl_vec))))
 		return (NULL);
-	(void)ft_memcpy(cpy, s, size);
-	return (cpy);
+	if (GNL_VEC_CAPACITY <= BUFFER_SIZE)
+		vec->capacity = BUFFER_SIZE + 1;
+	else
+		vec->capacity = GNL_VEC_CAPACITY;
+	if (!(vec->content = malloc(vec->capacity)))
+	{
+		free(vec);
+		return (NULL);
+	}
+	vec->length = 0;
+	vec->cursor = 0;
+	return (vec);
+}
+
+t_gnl_vec	*gnl_vec_grow(t_gnl_vec **ptr)
+{
+	t_gnl_vec	*old_vec;
+	t_gnl_vec	*new_vec;
+
+	if (!(new_vec = malloc(sizeof(t_gnl_vec))))
+		return (NULL);
+	old_vec = *ptr;
+	new_vec->capacity = old_vec->capacity * 2;
+	if (!(new_vec->content = malloc(new_vec->capacity)))
+	{
+		free(new_vec);
+		return (NULL);
+	}
+	new_vec->length = old_vec->length;
+	new_vec->cursor = old_vec->cursor;
+	ft_memcpy(new_vec->content, old_vec->content, old_vec->length);
+	free(old_vec);
+	*ptr = new_vec;
+	return (new_vec);
 }

@@ -14,29 +14,26 @@
 # define GET_NEXT_LINE_H
 
 #include <stdlib.h>
+#include <limits.h>
 #include <unistd.h>
 
+# define GNL_VEC_CAPACITY 1024
+
 #ifndef BUFFER_SIZE
-# define BUFFER_SIZE 4096
+# define BUFFER_SIZE 512
 #endif
 
-typedef struct	s_list
+typedef struct	s_gnl_vec
 {
-	char			*content;
-	struct s_list	*next;
-}				t_list;
-
-typedef struct	s_file
-{
-	t_list	*head;
-	t_list	*last;
+	char	*content;
 	size_t	length;
-}				t_file;
+	size_t	capacity;
+	size_t	cursor;
+}				t_gnl_vec;
 
-int	get_next_line(int fd, char **line);
-void	ft_lstdelone(t_list *lst, void (*del)(void *));
-size_t	ft_strlen(const char *s);
-char	*ft_strdup(const char *s);
-t_list	*ft_lstnew(void *content);
+void		*ft_memmove(void *dest, const void *src, size_t n);
+int			get_next_line(int fd, char **line);
+t_gnl_vec	*gnl_vec_new();
+t_gnl_vec	*gnl_vec_grow(t_gnl_vec **ptr);
 
 #endif

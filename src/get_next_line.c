@@ -13,107 +13,93 @@
 #include "get_next_line.h"
 #include <stdio.h> // TODO: Remove
 
-static void append_lst(t_file **ptr, char *buffer)
+int		fetch_eol(t_gnl_vec *file)
 {
-	t_list	*node;
-	t_file	*file_data;
+	char	*content;
 
-	if (!(node = ft_lstnew(buffer)))
-		return ; // TODO: handle error
-	file_data = *ptr;
-	if (!file_data)
-	{
-		if (!(*ptr = malloc(sizeof(t_file))))
-		{
-			free(node);
-			return ; // TODO: handle error
-		}
-		file_data = *ptr;
-		file_data->length = 0;
-		file_data->head = node;
+	if (!file) {
+		return (0);
 	}
-	else
-		file_data->last->next = node;
-	file_data->last = node;
-}
-
-static void lst_to_str(t_file *data, char *str)
-{
-	char *content;
-	t_list	*node;
-
-	while (data->head != data->last)
+	content = file->content;
+	while (file->cursor < file->length)
 	{
-		node = data->head;
-		content = node->content;
-		while (*content)
-			*str++ = *content++;
-		data->head = data->head->next;
-		ft_lstdelone(node, &free);
-	}
-	content = data->head->content;
-	node = data->head;
-	while (*content)
-		*str++ = *content++;
-	if (!(data->head = malloc(sizeof(t_list))))
-		return ; // TODO: handle error
-	data->head->content = ft_strdup(content);// TODO: handle error
-	data->head->next = NULL;
-	data->length = 0;
-	ft_lstdelone(node, &free);
-}
-
-static int	format_output(t_file *data, char **line)
-{
-	size_t	size;
-
-	size = data->length + 1;
-	if (!(*line = malloc(size)))
-		return (-1);
-	lst_to_str(data, *line);
-	return (1);
-}
-
-static int	fetch_eol(t_file *file_data)
-{
-	char	*str;
-
-	if (file_data)
-	{
-		str = file_data->last->content;
-		while (*str)
+		if (content[file->cursor] == '\n')
 		{
-			if (*str == '\n')
-			{
-				*str = '\0';
-				return (1);
-			}
-			file_data->length++;
-			str++;
+			content[file->cursor] = '\0';
+			return (1);
 		}
-
+		file->cursor++;
 	}
 	return (0);
 }
 
-int	get_next_line(int fd, char **line)
+int	check_capacity(t_gnl_vec **ptr)
 {
-	static t_file	*files_data[FOPEN_MAX];
-	char			*buffer;
-	int				buff_len;
+	t_gnl_vec *vec;
 
-	if (fd < 0 || !line || BUFFER_SIZE < 1 || fd >= FOPEN_MAX)
-		return (-1);
-	while (!fetch_eol(files_data[fd]))
+	vec = *ptr;
+	if (!vec)
 	{
-		if (!(buffer = malloc(BUFFER_SIZE + 1)))
-			return (-1); // TODO: free all
-		// TODO: handle error and EOF
-		if ((buff_len = read(fd, buffer, BUFFER_SIZE)) > 0)
-		{
-			buffer[buff_len] = '\0';
-			append_lst(&(files_data[fd]), buffer);
+		if (!(*ptr = gnl_vec_new())) {
+			return (0);
 		}
 	}
-	return (format_output(files_data[fd], line));
+	else
+		if (vec->length + BUFFER_SIZE >= vec->capacity && !gnl_vec_grow(ptr))
+			return (0);
+	return (1);
+}
+
+ssize_t	read_file(int fd, t_gnl_vec **ptr)
+{
+	t_gnl_vec	*file;
+	ssize_t		r_bytes;
+
+	if (!check_capacity(ptr))
+		return (-1);
+	file = *ptr;
+	if ((r_bytes = read(fd, file->content + file->length, BUFFER_SIZE)) == -1)
+		return (-1); // TODO: properly free memory
+	file->length += r_bytes;
+	return (r_bytes);
+}
+
+int		format_output(t_gnl_vec **ptr, char **line)
+{
+	t_gnl_vec	*file;
+	int			i;
+
+	file = *ptr;
+	if (!(*line = malloc(file->cursor)))
+	{
+		free(file->content);
+		free(file);
+		*ptr = NULL;
+		return (-1);
+	}
+	i = 0;
+	while (i < file->cursor)
+	{
+		(*line)[i] = file->content[i];
+		i++;
+	}
+	(*line)[i] = '\0';
+	ft_memmove(file->content, file->content + file->cursor, file->length);
+	file->length -= file->cursor;
+	file->cursor = 0;
+	return (1);
+}
+
+int		get_next_line(int fd, char **line)
+{
+	static t_gnl_vec	*files[FOPEN_MAX];
+
+	if (fd < 0 || fd >= FOPEN_MAX || !line || BUFFER_SIZE < 1
+		|| BUFFER_SIZE > SSIZE_MAX)
+		return (-1);
+	while (!fetch_eol(files[fd]))
+	{
+		read_file(fd, &(files[fd]));
+	}
+	return (format_output(&(files[fd]), line));
 }
