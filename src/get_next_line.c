@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: lwicket <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/12/01 14:10:02 by lwicket           #+#    #+#             */
-/*   Updated: 2020/12/02 14:24:29 by lwicket          ###   ########.fr       */
+/*   Created: 1970/01/01 00:00:00 by lwicket           #+#    #+#             */
+/*   Updated: 1970/01/01 00:00:00 by lwicket          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ int		format_output(t_gnl_vec **ptr, char **line)
 	file = *ptr;
 	if (!(*line = malloc(file->cursor)))
 	{
+		puts("\e[31mexplosion!!\e[0m");
 		free(file->content);
 		free(file);
 		*ptr = NULL;
@@ -84,8 +85,8 @@ int		format_output(t_gnl_vec **ptr, char **line)
 		i++;
 	}
 	(*line)[i] = '\0';
-	ft_memmove(file->content, file->content + file->cursor, file->length);
-	file->length -= file->cursor;
+	ft_memmove(file->content, file->content + file->cursor + 1, file->length - file->cursor);
+	file->length -= file->cursor + 1;
 	file->cursor = 0;
 	return (1);
 }
